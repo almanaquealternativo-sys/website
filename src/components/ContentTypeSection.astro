@@ -1,0 +1,53 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+type Entry =
+  | CollectionEntry<'arquetipos'>
+  | CollectionEntry<'simbolos'>
+  | CollectionEntry<'figuras'>
+  | CollectionEntry<'artigos'>;
+
+interface Props {
+  title: string;
+  entries: Entry[];
+  basePath: string;
+}
+
+const { title, entries, basePath } = Astro.props;
+const publishedEntries = entries
+  .filter((entry) => !entry.data.draft)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const formatDate = new Intl.DateTimeFormat('pt-BR', {
+  day: '2-digit',
+  month: 'short',
+  year: 'numeric',
+});
+---
+
+{
+  publishedEntries.length > 0 && (
+    <section class="category-section" aria-labelledby={`section-${title}`}>
+      <div class="category-heading">
+        <h2 id={`section-${title}`}>{title}</h2>
+      </div>
+
+      <div class="grid">
+        {publishedEntries.map((entry) => (
+          <a class="content-card" href={`${basePath}/${entry.id}/`}>
+            <time datetime={entry.data.date.toISOString()}>{formatDate.format(entry.data.date)}</time>
+            <h2>{entry.data.title}</h2>
+            <p>{entry.data.description}</p>
+            {entry.data.tags.length > 0 && (
+              <div class="tags" aria-label="Tags">
+                {entry.data.tags.map((tag) => (
+                  <span class="tag">{tag}</span>
+                ))}
+              </div>
+            )}
+          </a>
+        ))}
+      </div>
+    </section>
+  )
+}

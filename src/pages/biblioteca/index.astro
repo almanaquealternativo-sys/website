@@ -1,0 +1,31 @@
+---
+import { getCollection } from 'astro:content';
+import ContentList from '../../components/ContentList.astro';
+import NewsletterSignup from '../../components/NewsletterSignup.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const entries = await getCollection('artigos');
+---
+
+<BaseLayout
+  title="Biblioteca"
+  description="Artigos, ensaios e notas recorrentes do Almanaque Alternativo."
+>
+  <section class="page-title">
+    <p class="eyebrow">Biblioteca</p>
+    <h1>Artigos e notas para acompanhar a evolução do almanaque.</h1>
+    <p>
+      A biblioteca funciona como o feed editorial da plataforma. Aqui podem entrar textos livres,
+      guias, resenhas, listas de referências e chamadas para futuras áreas exclusivas.
+    </p>
+  </section>
+
+  <section class="section">
+    <ContentList entries={entries} basePath="/biblioteca" />
+  </section>
+
+  <NewsletterSignup
+    title="Fique por dentro das novidades !"
+    description="Este bloco já reserva o espaço da newsletter para a próxima etapa da plataforma."
+  />
+</BaseLayout>

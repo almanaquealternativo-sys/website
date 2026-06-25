@@ -1,0 +1,25 @@
+---
+import { getCollection } from 'astro:content';
+import ContentList from '../../components/ContentList.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const entries = await getCollection('simbolos');
+---
+
+<BaseLayout
+  title="Artigos ritualísticos"
+  description="Catálogo de símbolos, velas, cores, objetos e correspondências."
+>
+  <section class="page-title">
+    <p class="eyebrow">Artigos ritualísticos</p>
+    <h1>Um glossário para interpretar sinais, objetos e correspondências.</h1>
+    <p>
+      Reúna aqui textos sobre velas, incensos, cores, elementos, formas, números e outros sinais que
+      apareçam no seu almanaque.
+    </p>
+  </section>
+
+  <section class="section">
+    <ContentList entries={entries} basePath="/simbolos" groupByCategory />
+  </section>
+</BaseLayout>

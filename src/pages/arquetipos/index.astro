@@ -1,0 +1,25 @@
+---
+import { getCollection } from 'astro:content';
+import ContentList from '../../components/ContentList.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const entries = await getCollection('arquetipos');
+---
+
+<BaseLayout
+  title="Arquétipos"
+  description="Estudos sobre padrões simbólicos, jornadas internas e personagens arquetípicos."
+>
+  <section class="page-title">
+    <p class="eyebrow">Arquétipos</p>
+    <h1>Padrões simbólicos que organizam narrativas e experiências.</h1>
+    <p>
+      Use esta área para catalogar arquétipos, correspondências, leituras psicológicas e exemplos
+      práticos para estudo recorrente.
+    </p>
+  </section>
+
+  <section class="section">
+    <ContentList entries={entries} basePath="/arquetipos" groupByCategory />
+  </section>
+</BaseLayout>

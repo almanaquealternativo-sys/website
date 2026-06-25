@@ -1,0 +1,124 @@
+---
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'Fique por dentro das novidades !',
+  description = 'Entre na lista para receber novas publicações, estudos e atualizações do Almanaque Alternativo.',
+} = Astro.props;
+---
+
+<section class="newsletter-box" aria-labelledby="newsletter-title">
+  <div>
+    <p class="eyebrow">Newsletter</p>
+    <h2 id="newsletter-title">{title}</h2>
+    <p>{description}</p>
+  </div>
+
+  <form class="newsletter-form" data-newsletter-form>
+    <label class="sr-only" for="newsletter-email">Email</label>
+    <input
+      id="newsletter-email"
+      type="email"
+      name="email"
+      placeholder="seu@email.com"
+      autocomplete="email"
+      required
+    />
+    <button class="button primary" type="submit">Entrar na lista</button>
+    <p class="newsletter-status" data-newsletter-status aria-live="polite"></p>
+  </form>
+</section>
+
+<style>
+  .newsletter-form {
+    align-items: center;
+  }
+
+  .newsletter-status {
+    flex-basis: 100%;
+    margin: 0;
+    min-height: 1.5em;
+    text-align: right;
+  }
+
+  .newsletter-status[data-state='success'] {
+    color: var(--text);
+  }
+
+  .newsletter-status[data-state='error'] {
+    color: var(--gold);
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+</style>
+
+<script>
+  const newsletterForms = document.querySelectorAll<HTMLFormElement>('[data-newsletter-form]');
+
+  newsletterForms.forEach((form) => {
+    const status = form.querySelector<HTMLElement>('[data-newsletter-status]');
+    const submitButton = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const formData = new FormData(form);
+      const email = String(formData.get('email') ?? '');
+
+      status?.removeAttribute('data-state');
+
+      if (status) {
+        status.textContent = 'Enviando...';
+      }
+
+      if (submitButton) {
+        submitButton.disabled = true;
+      }
+
+      try {
+        const response = await fetch('/api/newsletter', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email }),
+        });
+
+        const result = (await response.json()) as { message?: string };
+
+        if (!response.ok) {
+          throw new Error(result.message ?? 'Não foi possível concluir a inscrição agora.');
+        }
+
+        form.reset();
+
+        if (status) {
+          status.dataset.state = 'success';
+          status.textContent = result.message ?? 'Inscrição realizada.';
+        }
+      } catch (error) {
+        if (status) {
+          status.dataset.state = 'error';
+          status.textContent =
+            error instanceof Error ? error.message : 'Não foi possível concluir a inscrição agora.';
+        }
+      } finally {
+        if (submitButton) {
+          submitButton.disabled = false;
+        }
+      }
+    });
+  });
+</script>

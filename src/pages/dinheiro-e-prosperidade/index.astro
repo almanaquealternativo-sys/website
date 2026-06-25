@@ -1,0 +1,30 @@
+---
+import { getCollection } from 'astro:content';
+import ContentTypeSection from '../../components/ContentTypeSection.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const category = 'Dinheiro e prosperidade';
+const arquetipos = (await getCollection('arquetipos')).filter((entry) => entry.data.category === category);
+const simbolos = (await getCollection('simbolos')).filter((entry) => entry.data.category === category);
+const figuras = (await getCollection('figuras')).filter((entry) => entry.data.category === category);
+---
+
+<BaseLayout
+  title="Dinheiro e prosperidade"
+  description="Estudos místicos e esotéricos sobre prosperidade, circulação de recursos e abundância."
+>
+  <section class="page-title">
+    <p class="eyebrow">Tema</p>
+    <h1>Dinheiro e prosperidade</h1>
+    <p>
+      Conteúdos sobre arquétipos, artigos ritualísticos e cristais voltados à prosperidade,
+      circulação de recursos, abundância e organização da vida material.
+    </p>
+  </section>
+
+  <section class="section category-list">
+    <ContentTypeSection title="Arquétipos" entries={arquetipos} basePath="/arquetipos" />
+    <ContentTypeSection title="Artigos ritualísticos" entries={simbolos} basePath="/simbolos" />
+    <ContentTypeSection title="Cristais" entries={figuras} basePath="/figuras" />
+  </section>
+</BaseLayout>

@@ -1,17 +1,90 @@
 ---
+import { getCollection } from 'astro:content';
+import NewsletterSignup from '../components/NewsletterSignup.astro';
+import SectionCard from '../components/SectionCard.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
 
+const latestArticles = (await getCollection('artigos'))
+  .filter((entry) => !entry.data.draft)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 3);
+
+const formatDate = new Intl.DateTimeFormat('pt-BR', {
+  day: '2-digit',
+  month: 'short',
+  year: 'numeric',
+});
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout>
+  <section class="hero">
+    <div>
+      <p class="eyebrow">Almanaque digital</p>
+      <h1>Uma comunidade de estudos alternativos.</h1>
+      <p class="hero-lead">
+        Uma plataforma editorial para compartilhamento de informações místicas e esotéricas sobre os
+        mais variados tópicos como arquétipos, símbolos, velas, incensos e cristais. Como utilizar
+        essas tecnologias para a melhora da qualidade de vida do homem comum.
+      </p>
+      <div class="actions">
+        <a class="button primary" href="/dinheiro-e-prosperidade/">Explorar temas</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">Temas</p>
+        <h2>Portais de estudo</h2>
+      </div>
+    </div>
+
+    <div class="grid">
+      <SectionCard
+        title="Dinheiro e prosperidade"
+        description="Arquétipos, artigos ritualísticos e cristais para estudar abundância e circulação de recursos."
+        href="/dinheiro-e-prosperidade/"
+      />
+      <SectionCard
+        title="Trabalho"
+        description="Conteúdos sobre foco, ação, disciplina, rotina e manifestação no trabalho."
+        href="/trabalho/"
+      />
+      <SectionCard
+        title="Relacionamentos"
+        description="Estudos sobre afeto, vínculos, harmonia, autocuidado e convivência."
+        href="/relacionamentos/"
+      />
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">Biblioteca</p>
+        <h2>Publicações recentes</h2>
+      </div>
+      <a class="button" href="/biblioteca/">Ver tudo</a>
+    </div>
+
+    <div class="grid">
+      {
+        latestArticles.map((article) => (
+          <a class="content-card" href={`/biblioteca/${article.id}/`}>
+            <time datetime={article.data.date.toISOString()}>{formatDate.format(article.data.date)}</time>
+            <h3>{article.data.title}</h3>
+            <p>{article.data.description}</p>
+            <div class="tags">
+              {article.data.tags.map((tag) => (
+                <span class="tag">{tag}</span>
+              ))}
+            </div>
+          </a>
+        ))
+      }
+    </div>
+  </section>
+
+  <NewsletterSignup />
+</BaseLayout>

@@ -1,0 +1,25 @@
+---
+import { getCollection } from 'astro:content';
+import ContentList from '../../components/ContentList.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const entries = await getCollection('figuras');
+---
+
+<BaseLayout
+  title="Cristais"
+  description="Usos, significados, categorização e geometria sagrada dos cristais."
+>
+  <section class="page-title">
+    <p class="eyebrow">Cristais</p>
+    <h1>Usos, significados e geometrias para ampliar o repertório.</h1>
+    <p>
+      Esta seção pode receber textos sobre cristais, categorizações, correspondências, usos
+      simbólicos e relações com geometria sagrada.
+    </p>
+  </section>
+
+  <section class="section">
+    <ContentList entries={entries} basePath="/figuras" groupByCategory />
+  </section>
+</BaseLayout>

@@ -1,0 +1,95 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+type Entry =
+  | CollectionEntry<'arquetipos'>
+  | CollectionEntry<'simbolos'>
+  | CollectionEntry<'figuras'>
+  | CollectionEntry<'artigos'>;
+
+interface Props {
+  entries: Entry[];
+  basePath: string;
+  emptyMessage?: string;
+  groupByCategory?: boolean;
+}
+
+const { entries, basePath, emptyMessage = 'Nenhum conteúdo publicado ainda.', groupByCategory = false } = Astro.props;
+const publishedEntries = entries
+  .filter((entry) => !entry.data.draft)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const groupedEntries = publishedEntries.reduce<Record<string, Entry[]>>((groups, entry) => {
+  const category = entry.data.category;
+  groups[category] = [...(groups[category] ?? []), entry];
+  return groups;
+}, {});
+
+const preferredCategoryOrder = ['Dinheiro e prosperidade', 'Trabalho', 'Relacionamentos'];
+const categories = Object.keys(groupedEntries).sort((a, b) => {
+  const firstIndex = preferredCategoryOrder.indexOf(a);
+  const secondIndex = preferredCategoryOrder.indexOf(b);
+
+  if (firstIndex !== -1 || secondIndex !== -1) {
+    return (firstIndex === -1 ? Number.POSITIVE_INFINITY : firstIndex) - (secondIndex === -1 ? Number.POSITIVE_INFINITY : secondIndex);
+  }
+
+  return a.localeCompare(b, 'pt-BR');
+});
+
+const formatDate = new Intl.DateTimeFormat('pt-BR', {
+  day: '2-digit',
+  month: 'short',
+  year: 'numeric',
+});
+---
+
+{
+  publishedEntries.length > 0 && groupByCategory ? (
+    <div class="category-list">
+      {categories.map((category) => (
+        <section class="category-section" aria-labelledby={`category-${category}`}>
+          <div class="category-heading">
+            <h2 id={`category-${category}`}>{category}</h2>
+          </div>
+
+          <div class="grid">
+            {groupedEntries[category].map((entry) => (
+              <a class="content-card" href={`${basePath}/${entry.id}/`}>
+                <time datetime={entry.data.date.toISOString()}>{formatDate.format(entry.data.date)}</time>
+                <h2>{entry.data.title}</h2>
+                <p>{entry.data.description}</p>
+                {entry.data.tags.length > 0 && (
+                  <div class="tags" aria-label="Tags">
+                    {entry.data.tags.map((tag) => (
+                      <span class="tag">{tag}</span>
+                    ))}
+                  </div>
+                )}
+              </a>
+            ))}
+          </div>
+        </section>
+      ))}
+    </div>
+  ) : publishedEntries.length > 0 ? (
+    <div class="grid">
+      {publishedEntries.map((entry) => (
+        <a class="content-card" href={`${basePath}/${entry.id}/`}>
+          <time datetime={entry.data.date.toISOString()}>{formatDate.format(entry.data.date)}</time>
+          <h2>{entry.data.title}</h2>
+          <p>{entry.data.description}</p>
+          {entry.data.tags.length > 0 && (
+            <div class="tags" aria-label="Tags">
+              {entry.data.tags.map((tag) => (
+                <span class="tag">{tag}</span>
+              ))}
+            </div>
+          )}
+        </a>
+      ))}
+    </div>
+  ) : (
+    <p>{emptyMessage}</p>
+  )
+}

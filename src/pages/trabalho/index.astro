@@ -1,0 +1,30 @@
+---
+import { getCollection } from 'astro:content';
+import ContentTypeSection from '../../components/ContentTypeSection.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const category = 'Trabalho';
+const arquetipos = (await getCollection('arquetipos')).filter((entry) => entry.data.category === category);
+const simbolos = (await getCollection('simbolos')).filter((entry) => entry.data.category === category);
+const figuras = (await getCollection('figuras')).filter((entry) => entry.data.category === category);
+---
+
+<BaseLayout
+  title="Trabalho"
+  description="Estudos místicos e esotéricos sobre foco, manifestação, rotina, carreira e realização."
+>
+  <section class="page-title">
+    <p class="eyebrow">Tema</p>
+    <h1>Trabalho</h1>
+    <p>
+      Conteúdos sobre arquétipos, artigos ritualísticos e cristais voltados a foco, ação,
+      manifestação, disciplina, rotina e realização no trabalho.
+    </p>
+  </section>
+
+  <section class="section category-list">
+    <ContentTypeSection title="Arquétipos" entries={arquetipos} basePath="/arquetipos" />
+    <ContentTypeSection title="Artigos ritualísticos" entries={simbolos} basePath="/simbolos" />
+    <ContentTypeSection title="Cristais" entries={figuras} basePath="/figuras" />
+  </section>
+</BaseLayout>
