@@ -4,12 +4,19 @@ interface Props {
   description?: string;
 }
 
+const siteName = 'Almanaque Alternativo';
+const siteUrl = 'https://almanaquealternativo.com.br';
+const defaultDescription =
+  'Comunidade de estudos místicos e esotéricos sobre arquétipos, símbolos, velas, incensos, cristais e práticas para o homem comum.';
+
 const {
-  title = 'Almanaque Alternativo',
-  description = 'Um almanaque digital sobre arquétipos, velas, simbolismo, cristais e estudos alternativos.',
+  title = siteName,
+  description = defaultDescription,
 } = Astro.props;
 
-const pageTitle = title === 'Almanaque Alternativo' ? title : `${title} | Almanaque Alternativo`;
+const pageTitle = title === siteName ? `${siteName} | Estudos místicos e esotéricos` : `${title} | ${siteName}`;
+const canonicalUrl = new URL(Astro.url.pathname, siteUrl).toString();
+const imageUrl = new URL('/logo.png', siteUrl).toString();
 
 const navItems = [
   { href: '/', label: 'Início' },
@@ -28,6 +35,17 @@ const navItems = [
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
     <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={siteName} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={imageUrl} />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={imageUrl} />
     <title>{pageTitle}</title>
   </head>
   <body>
