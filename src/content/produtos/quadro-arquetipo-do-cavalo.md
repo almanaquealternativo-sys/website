@@ -4,11 +4,10 @@ description: "Quadro com a imagem do cavalo de corrida Secretariat, associado a 
 price: "R$ 97,00"
 image: "/produtos/quadro-cavalo.png"
 specs: "Tamanho A4"
-checkoutUrl: "https://wa.me/5500000000000?text=Tenho%20interesse%20no%20Quadro%20Cavalo%20Secretariat"
+checkoutUrl: "https://wa.me/5511991909959?text=Tenho%20interesse%20no%20Quadro%20Cavalo%20Secretariat"
 category: "Quadros de arquétipos"
 tags:
   - cavalo
-  - Secretariat
   - movimento
   - conquista
 ---

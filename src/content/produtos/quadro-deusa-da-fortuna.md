@@ -4,7 +4,7 @@ description: "Quadro simbólico para contemplação da Deusa da Fortuna, associa
 price: "R$ 97,00"
 image: "/produtos/quadro-deusa-fortuna.png"
 specs: "Tamanho A4"
-checkoutUrl: "https://wa.me/5500000000000?text=Tenho%20interesse%20no%20Quadro%20Deusa%20da%20Fortuna"
+checkoutUrl: "https://wa.me/5511991909959?text=Tenho%20interesse%20no%20Quadro%20Deusa%20da%20Fortuna"
 category: "Quadros de arquétipos"
 tags:
   - fortuna

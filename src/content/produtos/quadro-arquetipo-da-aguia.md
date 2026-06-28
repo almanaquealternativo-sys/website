@@ -4,11 +4,11 @@ description: "Quadro decorativo para contemplação do arquétipo da águia, ass
 price: "R$ 97,00"
 image: "/produtos/quadro-aguia.png"
 specs: "Tamanho A4"
-checkoutUrl: "https://wa.me/5500000000000?text=Tenho%20interesse%20no%20Quadro%20Arqu%C3%A9tipo%20da%20%C3%81guia"
+checkoutUrl: "https://wa.me/5511991909959?text=Tenho%20interesse%20no%20Quadro%20Arqu%C3%A9tipo%20da%20%C3%81guia"
 category: "Quadros de arquétipos"
 tags:
   - águia
-  - relacionamentos
+  - poder
   - foco
 ---
 
