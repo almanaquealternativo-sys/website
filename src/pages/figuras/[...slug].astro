@@ -1,5 +1,6 @@
 ---
 import { getCollection, render } from 'astro:content';
+import Comments from '../../components/Comments.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
 export async function getStaticPaths() {
@@ -24,4 +25,5 @@ const { Content } = await render(entry);
       <Content />
     </div>
   </article>
+  <Comments articleSlug={`figuras/${entry.id}`} />
 </BaseLayout>

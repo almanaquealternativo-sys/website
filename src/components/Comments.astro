@@ -1,0 +1,177 @@
+---
+interface Props {
+  articleSlug: string;
+}
+
+const { articleSlug } = Astro.props;
+---
+
+<section class="comments-box" data-comments data-article-slug={articleSlug}>
+  <div class="section-heading">
+    <div>
+      <p class="eyebrow">Comunidade</p>
+      <h2>Comentários</h2>
+    </div>
+  </div>
+
+  <div data-comments-list>
+    <p>Carregando comentários...</p>
+  </div>
+
+  <div data-comment-logged-out hidden>
+    <p>Entre na sua conta para deixar um comentário neste artigo.</p>
+    <a class="button primary" href="/login/">Entrar para comentar</a>
+  </div>
+
+  <form class="comment-form" data-comment-form hidden>
+    <label for={`comment-${articleSlug}`}>Seu comentário</label>
+    <textarea
+      id={`comment-${articleSlug}`}
+      name="content"
+      placeholder="Compartilhe sua experiência ou reflexão..."
+      required
+    ></textarea>
+    <button class="button primary" type="submit">Publicar comentário</button>
+    <p class="comment-status" data-comment-status aria-live="polite"></p>
+  </form>
+</section>
+
+<script>
+  import { supabase } from '../lib/supabase';
+
+  type CommentRow = {
+    id: string;
+    article_slug: string;
+    user_email: string | null;
+    content: string;
+    created_at: string;
+  };
+
+  const formatDate = new Intl.DateTimeFormat('pt-BR', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+
+  const escapeHtml = (value: string) =>
+    value
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#039;');
+
+  document.querySelectorAll<HTMLElement>('[data-comments]').forEach((root) => {
+    const articleSlug = root.dataset.articleSlug;
+    const list = root.querySelector<HTMLElement>('[data-comments-list]');
+    const loggedOut = root.querySelector<HTMLElement>('[data-comment-logged-out]');
+    const form = root.querySelector<HTMLFormElement>('[data-comment-form]');
+    const status = root.querySelector<HTMLElement>('[data-comment-status]');
+    const submitButton = form?.querySelector<HTMLButtonElement>('button[type="submit"]');
+
+    if (!articleSlug || !list || !loggedOut || !form) return;
+
+    const setStatus = (message: string, state: 'success' | 'error' | 'neutral' = 'neutral') => {
+      if (!status) return;
+      status.dataset.state = state;
+      status.textContent = message;
+    };
+
+    const loadComments = async () => {
+      const { data, error } = await supabase
+        .from('comments')
+        .select('id, article_slug, user_email, content, created_at')
+        .eq('article_slug', articleSlug)
+        .eq('approved', true)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        list.innerHTML = '<p>Não foi possível carregar os comentários agora.</p>';
+        return;
+      }
+
+      const comments = (data ?? []) as CommentRow[];
+
+      if (comments.length === 0) {
+        list.innerHTML = '<p>Ainda não há comentários. Seja o primeiro a participar.</p>';
+        return;
+      }
+
+      list.innerHTML = `
+        <div class="comments-list">
+          ${comments
+            .map(
+              (comment) => `
+                <article class="comment-card">
+                  <strong>${escapeHtml(comment.user_email ?? 'Leitor')}</strong>
+                  <time datetime="${comment.created_at}">${formatDate.format(new Date(comment.created_at))}</time>
+                  <p>${escapeHtml(comment.content).replaceAll('\n', '<br />')}</p>
+                </article>
+              `,
+            )
+            .join('')}
+        </div>
+      `;
+    };
+
+    const renderAuth = async () => {
+      const { data } = await supabase.auth.getSession();
+      const isLoggedIn = Boolean(data.session?.user);
+
+      loggedOut.hidden = isLoggedIn;
+      form.hidden = !isLoggedIn;
+    };
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const { data } = await supabase.auth.getSession();
+      const user = data.session?.user;
+
+      if (!user) {
+        setStatus('Entre na sua conta para comentar.', 'error');
+        await renderAuth();
+        return;
+      }
+
+      const formData = new FormData(form);
+      const content = String(formData.get('content') ?? '').trim();
+
+      if (!content) {
+        setStatus('Escreva um comentário antes de publicar.', 'error');
+        return;
+      }
+
+      setStatus('Publicando comentário...', 'neutral');
+
+      if (submitButton) {
+        submitButton.disabled = true;
+      }
+
+      const { error } = await supabase.from('comments').insert({
+        article_slug: articleSlug,
+        user_id: user.id,
+        user_email: user.email,
+        content,
+      });
+
+      if (submitButton) {
+        submitButton.disabled = false;
+      }
+
+      if (error) {
+        setStatus('Não foi possível publicar o comentário agora.', 'error');
+        return;
+      }
+
+      form.reset();
+      setStatus('Comentário publicado.', 'success');
+      await loadComments();
+    });
+
+    void loadComments();
+    void renderAuth();
+  });
+</script>

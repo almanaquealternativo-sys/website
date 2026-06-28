@@ -25,6 +25,7 @@ const navItems = [
   { href: '/relacionamentos/', label: 'Relacionamentos' },
   { href: '/biblioteca/', label: 'Biblioteca' },
   { href: '/loja/', label: 'Loja' },
+  { href: '/login/', label: 'Entrar' },
 ];
 ---
 
@@ -455,6 +456,91 @@ const navItems = [
   .newsletter-box .button {
     flex: 0 0 auto;
     white-space: nowrap;
+  }
+
+  .auth-card,
+  .comments-box {
+    border: 1px solid var(--border);
+    border-radius: 28px;
+    background: var(--panel);
+    box-shadow: var(--shadow);
+    padding: 28px;
+  }
+
+  .comments-box {
+    margin: -24px auto 64px;
+    max-width: 820px;
+  }
+
+  .auth-form,
+  .comment-form {
+    display: grid;
+    gap: 12px;
+  }
+
+  .auth-form label,
+  .comment-form label {
+    color: var(--text);
+    font-weight: 700;
+  }
+
+  .auth-form input,
+  .comment-form textarea {
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    background: rgba(0, 0, 0, 0.18);
+    color: var(--text);
+    font: inherit;
+    padding: 14px 16px;
+  }
+
+  .comment-form textarea {
+    min-height: 130px;
+    resize: vertical;
+  }
+
+  .comments-list {
+    display: grid;
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+
+  .comment-card {
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    background: rgba(0, 0, 0, 0.16);
+    padding: 16px;
+  }
+
+  .comment-card strong,
+  .comment-card time {
+    display: block;
+  }
+
+  .comment-card time {
+    margin-top: 4px;
+    color: var(--muted);
+    font-size: 0.82rem;
+  }
+
+  .comment-card p {
+    margin: 12px 0 0;
+  }
+
+  .auth-status,
+  .comment-status {
+    margin: 0;
+    min-height: 1.5em;
+  }
+
+  .auth-status[data-state='success'],
+  .comment-status[data-state='success'] {
+    color: var(--text);
+  }
+
+  .auth-status[data-state='error'],
+  .comment-status[data-state='error'] {
+    color: var(--gold);
   }
 
   .article-shell {

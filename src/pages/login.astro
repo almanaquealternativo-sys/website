@@ -1,0 +1,126 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Entrar"
+  description="Entre no Almanaque Alternativo para comentar nos artigos e participar da comunidade."
+>
+  <section class="page-title">
+    <p class="eyebrow">Área logada</p>
+    <h1>Entrar no Almanaque Alternativo</h1>
+    <p>
+      Informe seu email para receber um link mágico de acesso. Depois de entrar, você poderá comentar
+      nos artigos da plataforma.
+    </p>
+  </section>
+
+  <section class="section">
+    <div class="auth-card">
+      <div data-auth-logged-out>
+        <h2>Receber link de acesso</h2>
+        <p>Enviaremos um link seguro para o seu email. Não é necessário criar senha.</p>
+
+        <form class="auth-form" data-login-form>
+          <label for="email">Email</label>
+          <input id="email" type="email" name="email" placeholder="seu@email.com" autocomplete="email" required />
+          <button class="button primary" type="submit">Enviar link mágico</button>
+          <p class="auth-status" data-auth-status aria-live="polite"></p>
+        </form>
+      </div>
+
+      <div data-auth-logged-in hidden>
+        <h2>Você está logado</h2>
+        <p data-user-email></p>
+        <button class="button" type="button" data-logout-button>Sair</button>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  import { supabase } from '../lib/supabase';
+
+  const loggedOut = document.querySelector<HTMLElement>('[data-auth-logged-out]');
+  const loggedIn = document.querySelector<HTMLElement>('[data-auth-logged-in]');
+  const loginForm = document.querySelector<HTMLFormElement>('[data-login-form]');
+  const logoutButton = document.querySelector<HTMLButtonElement>('[data-logout-button]');
+  const status = document.querySelector<HTMLElement>('[data-auth-status]');
+  const userEmail = document.querySelector<HTMLElement>('[data-user-email]');
+
+  const setStatus = (message: string, state: 'success' | 'error' | 'neutral' = 'neutral') => {
+    if (!status) return;
+    status.dataset.state = state;
+    status.textContent = message;
+  };
+
+  const renderSession = async () => {
+    const { data } = await supabase.auth.getSession();
+    const email = data.session?.user.email;
+
+    if (loggedOut) {
+      loggedOut.hidden = Boolean(email);
+    }
+
+    if (loggedIn) {
+      loggedIn.hidden = !email;
+    }
+
+    if (userEmail) {
+      userEmail.textContent = email ? `Logado como ${email}` : '';
+    }
+  };
+
+  const url = new URL(window.location.href);
+  const code = url.searchParams.get('code');
+
+  if (code) {
+    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    url.searchParams.delete('code');
+    window.history.replaceState({}, '', url.toString());
+
+    if (error) {
+      setStatus('Não foi possível concluir o login. Solicite um novo link.', 'error');
+    }
+  }
+
+  await renderSession();
+
+  loginForm?.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const formData = new FormData(loginForm);
+    const email = String(formData.get('email') ?? '').trim().toLowerCase();
+    const submitButton = loginForm.querySelector<HTMLButtonElement>('button[type="submit"]');
+
+    setStatus('Enviando link...', 'neutral');
+
+    if (submitButton) {
+      submitButton.disabled = true;
+    }
+
+    const { error } = await supabase.auth.signInWithOtp({
+      email,
+      options: {
+        emailRedirectTo: `${window.location.origin}/login/`,
+      },
+    });
+
+    if (submitButton) {
+      submitButton.disabled = false;
+    }
+
+    if (error) {
+      setStatus('Não foi possível enviar o link. Verifique o email e tente novamente.', 'error');
+      return;
+    }
+
+    loginForm.reset();
+    setStatus('Link enviado. Verifique seu email para entrar.', 'success');
+  });
+
+  logoutButton?.addEventListener('click', async () => {
+    await supabase.auth.signOut();
+    await renderSession();
+  });
+</script>

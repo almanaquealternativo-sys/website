@@ -1,2 +1,4 @@
 BEEHIIV_API_KEY=coloque_sua_api_key_aqui
 BEEHIIV_PUBLICATION_ID=pub_coloque_o_id_da_publicacao_aqui
+PUBLIC_SUPABASE_URL=https://seu-projeto.supabase.co
+PUBLIC_SUPABASE_ANON_KEY=sua_publishable_key_do_supabase

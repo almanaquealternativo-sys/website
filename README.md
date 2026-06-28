@@ -119,6 +119,48 @@ BEEHIIV_PUBLICATION_ID=pub_seu_id_da_publicacao
 No Cloudflare Pages, cadastre essas mesmas variaveis em `Settings > Environment variables`.
 Nao coloque a API key em arquivos versionados.
 
+## Login e comentarios com Supabase
+
+O login usa magic link por email e os comentarios ficam na tabela `comments` do Supabase.
+
+Configure as variaveis no Cloudflare Pages e no ambiente local:
+
+```text
+PUBLIC_SUPABASE_URL=https://seu-projeto.supabase.co
+PUBLIC_SUPABASE_ANON_KEY=sua_publishable_key_do_supabase
+```
+
+SQL inicial:
+
+```sql
+create table comments (
+  id uuid primary key default gen_random_uuid(),
+  article_slug text not null,
+  user_id uuid not null references auth.users(id) on delete cascade,
+  user_email text,
+  content text not null,
+  approved boolean default true,
+  created_at timestamptz default now()
+);
+
+create index comments_article_slug_idx on comments(article_slug);
+create index comments_created_at_idx on comments(created_at);
+
+alter table comments enable row level security;
+
+create policy "Anyone can read approved comments"
+on comments for select
+using (approved = true);
+
+create policy "Logged users can insert comments"
+on comments for insert
+with check (auth.uid() = user_id);
+
+create policy "Users can delete own comments"
+on comments for delete
+using (auth.uid() = user_id);
+```
+
 ## Proximas fases sugeridas
 
 - Definir modelo de conteudos gratuitos e exclusivos.
