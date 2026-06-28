@@ -67,6 +67,26 @@ O campo `category` define em qual pagina tematica o conteudo aparece. As paginas
 `Dinheiro e prosperidade`, `Relacionamentos` e `Trabalho`. A colecao escolhida define a secao
 interna da pagina: `arquetipos`, `simbolos` ou `figuras`.
 
+## Como adicionar produtos
+
+Crie um arquivo `.md` em `src/content/produtos/`:
+
+```md
+---
+title: "Quadro Arquétipo da Águia"
+description: "Resumo curto do produto."
+price: "R$ 97,00"
+image: "/aguia-relacionamentos.png"
+checkoutUrl: "https://wa.me/seu_numero_ou_link_do_mercado_pago"
+category: "Quadros de arquétipos"
+tags:
+  - águia
+  - foco
+---
+```
+
+O campo `checkoutUrl` pode apontar para WhatsApp, Mercado Pago ou outro checkout externo.
+
 ## Comandos
 
 All commands are run from the root of the project, from a terminal:

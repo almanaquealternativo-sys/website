@@ -14,6 +14,18 @@ const articleSchema = baseSchema.extend({
   section: z.string().default('Biblioteca'),
 });
 
+const productSchema = z.object({
+  title: z.string(),
+  description: z.string(),
+  price: z.string(),
+  image: z.string(),
+  specs: z.string().default('Tamanho A4'),
+  checkoutUrl: z.string().url(),
+  category: z.string().default('Quadros de arquétipos'),
+  draft: z.boolean().default(false),
+  tags: z.array(z.string()).default([]),
+});
+
 export const collections = {
   arquetipos: defineCollection({
     loader: glob({ pattern: '**/*.md', base: './src/content/arquetipos' }),
@@ -30,5 +42,9 @@ export const collections = {
   artigos: defineCollection({
     loader: glob({ pattern: '**/*.md', base: './src/content/artigos' }),
     schema: articleSchema,
+  }),
+  produtos: defineCollection({
+    loader: glob({ pattern: '**/*.md', base: './src/content/produtos' }),
+    schema: productSchema,
   }),
 };

@@ -24,6 +24,7 @@ const navItems = [
   { href: '/trabalho/', label: 'Trabalho' },
   { href: '/relacionamentos/', label: 'Relacionamentos' },
   { href: '/biblioteca/', label: 'Biblioteca' },
+  { href: '/loja/', label: 'Loja' },
 ];
 ---
 
@@ -354,6 +355,53 @@ const navItems = [
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
+    margin-top: auto;
+  }
+
+  .product-card {
+    overflow: hidden;
+    padding: 0;
+  }
+
+  .product-card img {
+    width: 100%;
+    height: 360px;
+    background: rgba(0, 0, 0, 0.2);
+    object-fit: contain;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .product-card-content {
+    display: flex;
+    min-height: 100%;
+    flex-direction: column;
+    padding: 24px;
+  }
+
+  .product-card-content h2 {
+    margin: 10px 0 8px;
+  }
+
+  .product-specs {
+    display: inline-flex;
+    width: fit-content;
+    margin-top: 10px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    color: var(--text);
+    font-size: 0.82rem;
+    font-weight: 700;
+    padding: 6px 10px;
+  }
+
+  .product-price {
+    margin: 8px 0 20px;
+    color: var(--text);
+    font-size: 1.35rem;
+    font-weight: 800;
+  }
+
+  .product-card .button {
     margin-top: auto;
   }
 

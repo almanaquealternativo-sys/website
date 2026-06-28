@@ -1,0 +1,55 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const products = (await getCollection('produtos'))
+  .filter((product) => !product.data.draft)
+  .sort((a, b) => a.data.title.localeCompare(b.data.title, 'pt-BR'));
+---
+
+<BaseLayout
+  title="Loja"
+  description="Loja do Almanaque Alternativo com quadros de arquétipos, objetos de estudo e itens simbólicos para contemplação."
+>
+  <section class="page-title">
+    <p class="eyebrow">Loja</p>
+    <h1>Quadros e objetos simbólicos para estudo e contemplação.</h1>
+    <p>
+      Uma primeira seleção de produtos do Almanaque Alternativo. Nesta fase, os pedidos podem ser
+      feitos por WhatsApp ou link de pagamento externo.
+    </p>
+  </section>
+
+  <section class="section">
+    {
+      products.length > 0 ? (
+        <div class="grid">
+          {products.map((product) => (
+            <article class="content-card product-card">
+              <img src={product.data.image} alt={product.data.title} loading="lazy" />
+              <div class="product-card-content">
+                <time>{product.data.category}</time>
+                <span class="product-specs">{product.data.specs}</span>
+                <h2>{product.data.title}</h2>
+                <p>{product.data.description}</p>
+                <strong class="product-price">{product.data.price}</strong>
+                {product.data.tags.length > 0 && (
+                  <div class="tags" aria-label="Tags">
+                    {product.data.tags.map((tag) => (
+                      <span class="tag">{tag}</span>
+                    ))}
+                  </div>
+                )}
+                <a class="button primary" href={product.data.checkoutUrl} target="_blank" rel="noreferrer">
+                  Comprar
+                </a>
+              </div>
+            </article>
+          ))}
+        </div>
+      ) : (
+        <p>Nenhum produto disponível no momento.</p>
+      )
+    }
+  </section>
+</BaseLayout>
