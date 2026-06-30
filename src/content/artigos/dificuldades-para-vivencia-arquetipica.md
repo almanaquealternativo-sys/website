@@ -1,7 +1,7 @@
 ---
-title: "Resistência aos arquétipos"
+title: "Dificuldades para vivência arquetípica"
 description: "Por que muitas pessoas resistem à vivência arquetípica mesmo quando escolhem trabalhar conscientemente com um arquétipo."
-date: 2026-06-28
+date: 2026-06-29
 section: "Biblioteca"
 category: "Arquétipos"
 tags:
@@ -12,7 +12,7 @@ tags:
   - transformação
 ---
 
-![Pessoas puxando uma corda, simbolizando resistência e conflito interno](/resistencia-aos-arquetipos.png)
+![Homem quebrando uma parede com marreta, simbolizando a superação de barreiras internas](/dificuldades-para-vivencia-arquetipica.png)
 
 As possibilidades de crescimento e de vivenciar novas experiências com os arquétipos são praticamente infinitas. Na prática, porém, tenho notado dificuldades em vivenciar arquétipos específicos.
 
