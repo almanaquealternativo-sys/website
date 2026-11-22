@@ -1,0 +1,48 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  product: CollectionEntry<'produtos'>;
+}
+
+const { product } = Astro.props;
+---
+
+<article
+  class:list={[
+    'content-card',
+    'product-card',
+    product.data.category === 'Perfumes ritualísticos'
+      ? 'product-card-perfume'
+      : product.data.category === 'Hipnose'
+        ? 'product-card-session'
+        : 'product-card-frame',
+  ]}
+>
+  <div class="product-card-media">
+    <img src={product.data.image} alt={product.data.title} loading="lazy" />
+  </div>
+  <div class="product-card-content">
+    <time>{product.data.category}</time>
+    <span class="product-specs">{product.data.specs}</span>
+    <div class="product-card-body">
+      <h2>{product.data.title}</h2>
+      <p>{product.data.description}</p>
+    </div>
+    <div class="product-card-footer">
+      <strong class="product-price">{product.data.price}</strong>
+      {
+        product.data.tags.length > 0 && (
+          <div class="tags" aria-label="Tags">
+            {product.data.tags.map((tag) => (
+              <span class="tag">{tag}</span>
+            ))}
+          </div>
+        )
+      }
+      <a class="button primary" href={product.data.checkoutUrl} target="_blank" rel="noreferrer">
+        Comprar
+      </a>
+    </div>
+  </div>
+</article>

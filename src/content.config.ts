@@ -22,6 +22,7 @@ const productSchema = z.object({
   specs: z.string().default('Tamanho A4'),
   checkoutUrl: z.string().url(),
   category: z.string().default('Quadros de arquétipos'),
+  featured: z.boolean().default(false),
   draft: z.boolean().default(false),
   tags: z.array(z.string()).default([]),
 });
